@@ -1,0 +1,94 @@
+# written by @ilkerttgl
+import random
+
+
+# Defining user-defined exceptions
+
+
+class Error(Exception):  # Defining an error class for possible errors
+    """Base class for exceptions in this module."""
+    pass
+
+
+class ValueNegativeError(Error):
+    """"Raised when the input value is negative"""
+    pass
+
+
+class ValueBiggerThan4Error(Error):
+    """Raised when the input value is bigger than 4"""
+    pass
+
+
+def guess_result():
+    while True:
+        try:
+            correct_p = int(input('How many digits are in correct position?'))  # Taking input for the correct places
+            if correct_p < 0:
+                raise ValueNegativeError  # Entering errors for the exceptions
+            elif correct_p > 4:
+                raise ValueBiggerThan4Error
+        except ValueNegativeError:
+            print('The answer can not be negative')  # The appeared texts when the error occurs
+            continue
+        except ValueBiggerThan4Error:
+            print('The answer can not be bigger than 4')
+            continue
+        except ValueError:
+            print('Please enter a valid answer')
+            continue
+        if correct_p == 4:
+            print('I won, do you wanna play again? Y or N')
+            try_again = str(input())
+            if str.upper(try_again) == 'Y':
+                print("But I don't, LOL")
+                exit()
+            elif str.upper(try_again) == 'N':
+                print("Okay, cya")
+                exit()
+            else:
+                print("I said Y or N, not this meaningless thing:'", try_again, "'")
+                print("Just learn how to follow rules... cya")
+                exit()
+        try:
+            wrong_p = int(input('How many digits are in wrong position?'))  # Same thing with the lines between 25-42
+            if wrong_p < 0:
+                raise ValueNegativeError
+            elif wrong_p > 4:
+                raise ValueBiggerThan4Error
+        except ValueNegativeError:
+            print('The answer can not be negative')
+            continue
+        except ValueBiggerThan4Error:
+            print('The answer can not be bigger than 4')
+            continue
+        except ValueError:
+            print('Please enter a valid answer')
+            continue
+        else:
+            break
+    return correct_p, wrong_p
+
+
+possibility_list = list(range(1023, 9876 + 1))
+possibility_list = list(filter(lambda num: len(set(str(num))) == len(str(num)), possibility_list))
+cp = 0
+
+while cp < 4:
+    selected_number = random.choice(possibility_list)
+    print('My guess is:', selected_number)
+    cp, wp = guess_result()
+    i = 0
+    while i < len(possibility_list):
+        dummy_cp = 0
+        dummy_wp = 0
+        dummy_number = possibility_list[i]
+        for j in range(4):
+            if str(dummy_number)[j] == str(selected_number)[j]:
+                dummy_cp += 1
+            elif str(dummy_number)[j] in str(selected_number):
+                dummy_wp += 1
+        if dummy_cp != cp or dummy_wp != wp:
+            possibility_list.remove(dummy_number)
+        else:
+            i += 1
